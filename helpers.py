@@ -1,7 +1,7 @@
 import sqlite3
 from flask import _app_ctx_stack
 
-DATABASE = '/path/to/database.db'
+DATABASE = 'data/momentia.db'
 
 def get_db():
     top = _app_ctx_stack.top
