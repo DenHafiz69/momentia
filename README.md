@@ -33,7 +33,7 @@
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/username/momentia.git
+   git clone https://github.com/DenHafiz69/momentia.git
    cd momentia
    ```
 
