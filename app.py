@@ -15,8 +15,19 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Connect to SQLite database
-conn = sqlite3.connect('data/database.db')
+# conn = sqlite3.connect('data/database.db')
+conn = sqlite3.connect(':memory:')
 cursor = conn.cursor()
+
+# Check if table not exist, then create table
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL)
+    """)
+
+conn.commit()
 
 # The homepage of the website
 @app.route('/')
@@ -58,14 +69,22 @@ def logout():
 
     return redirect('/')
 
-@app.route('/register')
+@app.route('/register', methods=['POST', 'GET'])
 def register():
 
     if request.method == 'POST':
-        pass
+
+        username = request.form.get('username')
+        password = generate_password_hash(request.form.get('password'))
+        
+        with conn:
+            cursor.execute("INSERT INTO users (username, password) VALUES(?,?)",
+            (username, password))
+
+        return redirect('/')
 
     return render_template('register.html')
 
 
 if __name__ == '__main__':  
-   app.run(debug=True)  
+   app.run(debug=True)
