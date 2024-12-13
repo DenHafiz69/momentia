@@ -1,15 +1,14 @@
 from flask import Flask, render_template, redirect, request
+import flask_login
 
 app  = Flask(__name__)
+login_manaer = flask_login.LoginManager()
+login_manaer.init_app(app)
 
 # The homepage of the website
 @app.route('/')
 def index():
     return render_template('index.html')
 
-
-# User that is not logged in would see this and the login only
-@app.route('/register', methods=['POST', 'GET'])
-def register():
-    if request.method == 'GET':
-        return render_template('register.html')
+# Login when the user already in the database
+# If not, go to the index page and tell the user to login
