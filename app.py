@@ -38,27 +38,30 @@ def index():
 
 # Login when the user already in the database
 # If not, go to the index page and tell the user to login
+# Refer to this website 
+# https://www.geeksforgeeks.org/login-and-registration-project-using-flask-and-mysql/
 @app.route('/login', methods=['POST', 'GET'])
 def login():
 
-    # Forget any user_id
-    session.clear()
+    msg = ''
 
-    if request.method == 'GET':
-        return render_template('login.html')
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        username = request.form['username']
+        password = request.form['password']
 
-    elif request.method == 'POST':
-        # Ensure username was submmited
-        if not request.form.get('username'):
-            return render_template('apology.html', error="must provide username")
-
-        # Ensure password was submmited
-        if not request.form.get('password'):
-            return render_template('apology.html', error="must provide password")
-
-        # Ensure password was submmited
-
-        # Query database for username
+        cursor.execute('SELECT * FROM accounts WHERE username=? AND password=?', username, password)
+        account = cursor.fetchone()
+        if account:
+            session['loggedin'] = True
+            session['id'] = account['id']
+            session['username'] =account['username']
+            msg = 'Logged in successfully!'
+            return render_template('index.html', msg = msg)
+        else:
+            msg = 'Incorrect username / password'
+        
+    return render_template('login.html', msg = msg)
+        
 
 # Logout the current user
 @app.route('/logout')

@@ -1,0 +1,18 @@
+.post-container {
+    text-align: left;
+}
+
+.post-title {
+    font-size: 2em;
+}
+
+.post-date {
+    font-style: italic;
+    
+}
+
+.post-content {
+    font-size: 0.875em;
+    text-align: justify;
+    padding-top: 1em;
+}
