@@ -88,6 +88,9 @@ def register():
 
     return render_template('register.html')
 
+@app.route('/settings', methods=['POST', 'GET'])
+def settings():
+    return redirect('/')
 
 if __name__ == '__main__':  
    app.run(debug=True)
