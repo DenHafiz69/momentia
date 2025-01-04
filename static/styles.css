@@ -3,7 +3,7 @@
 }
 
 .post-title {
-    font-size: 2em;
+    font-size: 1.8em;
 }
 
 .post-date {
@@ -15,4 +15,9 @@
     font-size: 0.875em;
     text-align: justify;
     padding-top: 1em;
+}
+
+.post-timer {
+    text-align: right;
+    font-style: italic;
 }
