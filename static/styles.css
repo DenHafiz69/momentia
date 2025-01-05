@@ -1,3 +1,9 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', 'sans-serif';
+}
+
 .post-container {
     text-align: left;
 }
@@ -20,4 +26,13 @@
 .post-timer {
     text-align: right;
     font-style: italic;
+}
+
+.login-banner h1 {
+    font-size: 3em;
+    color: aquamarine;
+}
+
+.login-banner p {
+    font-size: 1.25em;
 }
