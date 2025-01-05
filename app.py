@@ -48,14 +48,16 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        cursor.execute('SELECT * FROM users WHERE username=? AND password=?', (username, password))
-        account = cursor.fetchone()
-        if account:
-            session['username'] =account['username']
-            flash('Logged in successfully!')
-            return render_template('index.html', notification = notification)
-        else:
-            flash('Invalid credentials')
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM users WHERE username=? AND password=?', (username, password))
+            account = cursor.fetchone()
+            if account:
+                session['username'] =account['username']
+                flash('Logged in successfully!')
+                return render_template('index.html')
+            else:
+                flash('Invalid credentials')
         
     return render_template('login.html')
         
@@ -77,13 +79,21 @@ def register():
         username = request.form.get('username')
         password = generate_password_hash(request.form.get('password'))
         
-        cursor.execute("INSERT INTO users (username, password) VALUES(?,?)",
-            (username, password))
+        with sqlite3.connect(DATABASE) as conn:
+            cursor = conn.cursor()
 
-        conn.commit()
-        conn.close()
+            # Check if the user exist or not
+            try: 
+                user = cursor.execute("SELECT * FROM USERS WHERE username=?", (username))
+                flash("User already exist!")
+            except:
+                # If the user does not exist, insert the value
+                cursor.execute("INSERT INTO users (username, password) VALUES(?,?)", (username, password))
 
-        return redirect('/')
+            conn.commit()
+            conn.close()
+
+            return redirect('/')
 
     return render_template('register.html')
 
@@ -91,5 +101,7 @@ def register():
 def settings():
     return redirect('/')
 
-if __name__ == '__main__':  
-   app.run(debug=True)
+if __name__ == '__main__':
+    
+    init_db()
+    app.run(debug=True)
