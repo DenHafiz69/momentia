@@ -16,7 +16,7 @@ Session(app)
 
 # Connect to SQLite database
 # conn = sqlite3.connect('data/database.db')
-conn = sqlite3.connect(':memory:')
+conn = sqlite3.connect('./data/data.db')
 cursor = conn.cursor()
 
 # Check if table not exist, then create table
@@ -28,6 +28,7 @@ cursor.execute("""
     """)
 
 conn.commit()
+conn.close()
 
 # The homepage of the website
 @app.route('/')
@@ -41,11 +42,14 @@ def index():
 @app.route('/login', methods=['POST', 'GET'])
 def login():
 
+    conn = sqlite3.connect('./data/data.db')
+    cursor = conn.cursor()
+
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         username = request.form['username']
         password = request.form['password']
 
-        cursor.execute('SELECT * FROM accounts WHERE username=? AND password=?', (username, password))
+        cursor.execute('SELECT * FROM users WHERE username=? AND password=?', (username, password))
         account = cursor.fetchone()
         if account:
             session['username'] =account['username']
@@ -69,14 +73,19 @@ def logout():
 @app.route('/register', methods=['POST', 'GET'])
 def register():
 
+    conn = sqlite3.connect('./data/data.db')
+    cursor = conn.cursor()
+
     if request.method == 'POST':
 
         username = request.form.get('username')
         password = generate_password_hash(request.form.get('password'))
         
-        with conn:
-            cursor.execute("INSERT INTO users (username, password) VALUES(?,?)",
+        cursor.execute("INSERT INTO users (username, password) VALUES(?,?)",
             (username, password))
+
+        conn.commit()
+        conn.close()
 
         return redirect('/')
 
