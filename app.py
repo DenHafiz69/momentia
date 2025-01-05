@@ -38,8 +38,6 @@ def index():
 
 # Login when the user already in the database
 # If not, go to the index page and tell the user to login
-# Refer to this website 
-# https://www.geeksforgeeks.org/login-and-registration-project-using-flask-and-mysql/
 @app.route('/login', methods=['POST', 'GET'])
 def login():
 
