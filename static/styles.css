@@ -36,3 +36,7 @@
 .login-banner p {
     font-size: 1.25em;
 }
+
+.login-page {
+    align-items: center;
+}
