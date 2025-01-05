@@ -14,21 +14,23 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+DATABASE = './data/data.db'
+
 # Connect to SQLite database
 # conn = sqlite3.connect('data/database.db')
-conn = sqlite3.connect('./data/data.db')
-cursor = conn.cursor()
+def init_db():
 
-# Check if table not exist, then create table
-cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT NOT NULL,
-    password TEXT NOT NULL)
-    """)
+    with sqlite3.connect(DATABASE):
+        cursor = conn.cursor()
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            password TEXT NOT NULL
+            )
+        ''')
 
-conn.commit()
-conn.close()
+    conn.commit()
 
 # The homepage of the website
 @app.route('/')
@@ -41,9 +43,6 @@ def index():
 # If not, go to the index page and tell the user to login
 @app.route('/login', methods=['POST', 'GET'])
 def login():
-
-    conn = sqlite3.connect('./data/data.db')
-    cursor = conn.cursor()
 
     if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         username = request.form['username']
@@ -72,9 +71,6 @@ def logout():
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
-
-    conn = sqlite3.connect('./data/data.db')
-    cursor = conn.cursor()
 
     if request.method == 'POST':
 
