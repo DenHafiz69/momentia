@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, redirect, request, session, url_for, flash
+from flask import Flask, render_template, redirect, request, session, url_for, flash, g
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -16,21 +16,18 @@ Session(app)
 
 DATABASE = './data/data.db'
 
-# Connect to SQLite database
-# conn = sqlite3.connect('data/database.db')
 def init_db():
-
-    with sqlite3.connect(DATABASE):
+    with sqlite3.connect(DATABASE) as conn:
         cursor = conn.cursor()
-        cursor.execute('''
+        cursor.execute("""
             CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             username TEXT NOT NULL,
-            password TEXT NOT NULL
-            )
-        ''')
+            password TEXT NOT NULL)
+        """)
 
-    conn.commit()
+        conn.commit()
+
 
 # The homepage of the website
 @app.route('/')
@@ -55,6 +52,7 @@ def login():
             if account:
                 session['username'] =account['username']
                 flash('Logged in successfully!')
+                
                 return render_template('index.html')
             else:
                 flash('Invalid credentials')
@@ -85,13 +83,10 @@ def register():
             # Check if the user exist or not
             try: 
                 user = cursor.execute("SELECT * FROM USERS WHERE username=?", (username))
-                flash("User already exist!")
             except:
                 # If the user does not exist, insert the value
                 cursor.execute("INSERT INTO users (username, password) VALUES(?,?)", (username, password))
-
-            conn.commit()
-            conn.close()
+                conn.commit()
 
             return redirect('/')
 
@@ -102,6 +97,5 @@ def settings():
     return redirect('/')
 
 if __name__ == '__main__':
-    
     init_db()
     app.run(debug=True)
