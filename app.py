@@ -5,6 +5,7 @@ from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import sqlite3
+import cs50
 
 # Configure application
 app  = Flask(__name__)
@@ -14,20 +15,20 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-DATABASE = './data/data.db'
+DATABASE = "./data/data.db"
 
-def init_db():
-    with sqlite3.connect(DATABASE) as conn:
-        cursor = conn.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            password TEXT NOT NULL)
-        """)
+with sqlite3.connect(DATABASE) as conn:
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        password TEXT NOT NULL)
+    """)
 
-        conn.commit()
+    conn.commit()
 
+db = cs50.SQL("sqlite:///data/data.db")
 
 # The homepage of the website
 @app.route('/')
@@ -45,17 +46,24 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        with sqlite3.connect(DATABASE) as conn:
-            cursor = conn.cursor()
-            cursor.execute('SELECT * FROM users WHERE username=? AND password=?', (username, password))
-            account = cursor.fetchone()
-            if account:
-                session['username'] =account['username']
-                flash('Logged in successfully!')
-                
-                return render_template('index.html')
-            else:
-                flash('Invalid credentials')
+        rows = db.execute("""
+            SELECT * FROM users
+            WHERE username = ?
+        """, username)[0]
+
+        if rows:
+            username = rows['username']
+            password_hash = rows['password']
+
+            try:
+                check_password_hash(password_hash, password)
+            except:
+                flash("Password does not match.")
+
+            return redirect("/")
+            
+        else:
+            flash("Invalid credentials.")
         
     return render_template('login.html')
         
@@ -76,17 +84,19 @@ def register():
 
         username = request.form.get('username')
         password = generate_password_hash(request.form.get('password'))
-        
-        with sqlite3.connect(DATABASE) as conn:
-            cursor = conn.cursor()
 
-            # Check if the user exist or not
-            try: 
-                user = cursor.execute("SELECT * FROM USERS WHERE username=?", (username))
-            except:
-                # If the user does not exist, insert the value
-                cursor.execute("INSERT INTO users (username, password) VALUES(?,?)", (username, password))
-                conn.commit()
+        rows = db.execute("""
+            SELECT * FROM users
+            WHERE username=?
+        """, (username))
+
+        if rows:
+            flash("User already exist.")
+        else:
+            db.execute("""
+                INSERT INTO users (username, password)
+                VALUES(?,?)
+            """, username, password)
 
             return redirect('/')
 
@@ -97,5 +107,5 @@ def settings():
     return redirect('/')
 
 if __name__ == '__main__':
-    init_db()
+
     app.run(debug=True)
