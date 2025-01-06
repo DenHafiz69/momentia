@@ -43,19 +43,23 @@
                     <li class="nav-item">
                         <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">Home</a>
                     </li>
-                    <!-- Does NOT show when user is logged in -->
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'login' %}active{% endif %}" href="{{ url_for('login') }}">Login</a>
-                    </li>
-                    </li>
-                    <!-- Does NOT show when user is logged in -->
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'register' %}active{% endif %}" href="{{ url_for('register') }}">Register</a>
-                    </li>
-                    <!-- Only show when user is logged in -->
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'settings' %}active{% endif %}" href="{{ url_for('settings') }}">Settings</a>
-                    </li>
+
+                    {% if session["user_id"] %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'settings' %}active{% endif %}" href="{{ url_for('settings') }}">Settings</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'login' %}active{% endif %}" href="{{ url_for('login') }}">Login</a>
+                        </li>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.endpoint == 'register' %}active{% endif %}" href="{{ url_for('register') }}">Register</a>
+                        </li>
+                    {% endif %}
                 </ul>
                 </div>
             </div>
