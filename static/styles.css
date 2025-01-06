@@ -8,11 +8,11 @@
 
 .post {
     text-align: left;
-    background-color: #3f3f3f;
 }
 
 .post-title {
-    font-size: 2em;
+    font-size: 1.8em;
+    color: #5f80c5;
 }
 
 .post-content {
@@ -26,4 +26,8 @@
 
 ::placeholder {
     text-align: center;
+}
+
+.navbar {
+    background-color: #5f80c5;
 }
