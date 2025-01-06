@@ -33,12 +33,27 @@ with sqlite3.connect(DATABASE) as conn:
 
 db = cs50.SQL("sqlite:///data/data.db")
 
+posts = [
+    {
+        'author': 'Den Hafiz',
+        'title': 'This is a post',
+        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque rhoncus et magna non suscipit. Aliquam porttitor dolor velit, eu rutrum nulla accumsan ut. Morbi enim augue, scelerisque vitae orci eget, finibus pretium leo. Integer pulvinar laoreet pretium.',
+        'date_posted': '5th January 2024'
+    },
+    {
+        'author': 'Nor Syazni',
+        'title': 'Second post',
+        'content': 'Nullam interdum, ante nec tempor bibendum, nisl mi ornare neque, ut malesuada felis nisi ac erat. Mauris et facilisis sapien. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque tincidunt purus elit, pretium rhoncus purus commodo nec. Curabitur pellentesque tempus eros vel vestibulum. Ut sed finibus arcu. Vestibulum non quam elit.',
+        'date_posted': '2nd January 2024'
+    }
+]
+
 # The homepage of the website
 @app.route('/')
 def index():
 
     # Show the homepage
-    return render_template('index.html')
+    return render_template('index.html', posts=posts)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():

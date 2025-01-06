@@ -1,45 +1,9 @@
 {% extends "layout.html" %}
 
 {% block main %}
-    <div class="container post-container">
-        <div class="container post-title">
-            <h1>This is a post</h1>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="col post-date">
-                    5th January 2024
-                </div>
-                <div class="col post-timer">
-                    3 hours 12 minutes
-                </div>
-            </div>
-        </div>
-        <div class="container post-content">
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque rhoncus et magna non suscipit. Aliquam porttitor dolor velit, eu rutrum nulla accumsan ut. Morbi enim augue, scelerisque vitae orci eget, finibus pretium leo. Integer pulvinar laoreet pretium. Nulla non tincidunt orci. Morbi sed faucibus dui, sit amet ullamcorper mi.</p>
-
-            <p>Pellentesque a egestas ante. Mauris fermentum sem mi. Suspendisse hendrerit vitae arcu at condimentum. Sed quis neque lacus. Vivamus non purus justo. Aenean tristique pharetra ipsum a volutpat. Aliquam consequat et enim eget ultrices. Donec sit amet risus nec nunc suscipit lobortis.</p>
-        </div>
-    </div>
-
-    <div class="container post-container">
-        <div class="container post-title">
-            <h1>Second post</h1>
-        </div>
-        <div class="container">
-            <div class="row">
-                <div class="col post-date">
-                    2nd January 2024
-                </div>
-                <div class="col post-timer">
-                    1 hour 5 minutes
-                </div>
-            </div>
-        </div>
-        <div class="container post-content">
-            <p>Nullam interdum, ante nec tempor bibendum, nisl mi ornare neque, ut malesuada felis nisi ac erat. Mauris et facilisis sapien. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque tincidunt purus elit, pretium rhoncus purus commodo nec. Curabitur pellentesque tempus eros vel vestibulum. Ut sed finibus arcu. Vestibulum non quam elit.</p>
-
-            <p>Aliquam in est sit amet turpis condimentum scelerisque. Ut ultricies vel risus in interdum. Integer feugiat, mi nec convallis blandit, magna tortor fringilla nisl, non bibendum nunc lectus quis tortor. Morbi luctus nibh sit amet facilisis dapibus. Suspendisse potenti. Aenean malesuada, erat eu ullamcorper pharetra, sem dolor varius nisl, vel feugiat neque augue a justo. Suspendisse volutpat aliquet nisl, vitae vestibulum nunc viverra id. Cras viverra posuere lacus, nec lobortis orci congue non. Aliquam erat volutpat.</p>
-        </div>
-    </div>
+    {% for post in posts %}
+        <h1 class="post-title">{{ post.title }}</h1>
+        <p>By {{ post.author }} on {{ post.date_posted }}</p>
+        <p class="post-content">{{ post.content }}</p>
+    {% endfor %}
 {% endblock %}
