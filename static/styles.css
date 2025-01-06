@@ -45,3 +45,11 @@
 .flashes {
     text-align: center;
 }
+
+::placeholder {
+    text-align: center;
+}
+
+.form-group {
+    padding: 0.5em;
+}
