@@ -62,12 +62,14 @@ def login():
                 flash("Password does not match.")
             
             session["user_id"] = user_id
+            
+            flash("Login successful")
 
             return redirect("/")
             
         else:
             flash("Invalid credentials.")
-        
+    
     return render_template('login.html')
         
 
