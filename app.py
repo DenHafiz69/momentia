@@ -52,6 +52,7 @@ def login():
         """, username)[0]
 
         if rows:
+            user_id = rows['id']
             username = rows['username']
             password_hash = rows['password']
 
@@ -59,6 +60,8 @@ def login():
                 check_password_hash(password_hash, password)
             except:
                 flash("Password does not match.")
+            
+            session["user_id"] = user_id
 
             return redirect("/")
             
