@@ -1,11 +1,11 @@
 import os
 
-from flask import Flask, render_template, redirect, request, session, url_for, flash, g
-from flask_session import Session
-from werkzeug.security import check_password_hash, generate_password_hash
-
 import sqlite3
 import cs50
+
+from werkzeug.security import check_password_hash, generate_password_hash
+from flask import Flask, render_template, redirect, session, flash, g
+from flask_session import Session
 
 # Configure application
 app  = Flask(__name__)
