@@ -2,7 +2,7 @@
 
 {% block main %}
     {% for post in posts %}
-        <div class="container post rounded">
+        <div class="post rounded">
             <h1 class="post-title">{{ post.title }}</h1>
             <p>By <a href="#">{{ post.author }}</a> on {{ post.date_posted }}</p>
             <p class="post-content">{{ post.content }}</p>
