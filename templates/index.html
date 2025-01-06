@@ -2,8 +2,10 @@
 
 {% block main %}
     {% for post in posts %}
-        <h1 class="post-title">{{ post.title }}</h1>
-        <p>By {{ post.author }} on {{ post.date_posted }}</p>
-        <p class="post-content">{{ post.content }}</p>
+        <div class="container post rounded">
+            <h1 class="post-title">{{ post.title }}</h1>
+            <p>By <a href="#">{{ post.author }}</a> on {{ post.date_posted }}</p>
+            <p class="post-content">{{ post.content }}</p>
+        </div>
     {% endfor %}
 {% endblock %}

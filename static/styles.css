@@ -1,55 +1,29 @@
+/* Color Reference: https://colorffy.com/dark-theme-generator?colors=1a5fb4-121212 */
+
 * {
     margin: 0;
     padding: 0;
     font-family: 'Roboto', 'sans-serif';
 }
 
-.post-container {
+.post {
     text-align: left;
+    background-color: #3f3f3f;
 }
 
-.post-title h1 {
-    font-size: 1.8em;
-}
-
-.post-date {
-    font-style: italic;
-    
+.post-title {
+    font-size: 2em;
 }
 
 .post-content {
-    font-size: 0.875em;
     text-align: justify;
-    padding-top: 1em;
-}
-
-.post-timer {
-    text-align: right;
-    font-style: italic;
-}
-
-.login-banner h1 {
-    font-size: 3em;
-    color: aquamarine;
-}
-
-.login-banner p {
-    font-size: 1.25em;
-}
-
-.login-page {
-    align-items: center;
-    padding-top: 5em;
-}
-
-.flashes {
-    text-align: center;
-}
-
-::placeholder {
-    text-align: center;
+    font-size: 0.875em;
 }
 
 .form-group {
     padding: 0.5em;
+}
+
+::placeholder {
+    text-align: center;
 }
