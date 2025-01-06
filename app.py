@@ -58,6 +58,11 @@ def index():
 @app.route('/login', methods=['POST', 'GET'])
 def login():
     form = LoginForm()
+
+    if form.validate_on_submit():
+        flash(f'Login successful.', 'success')
+        return redirect(url_for('index'))
+
     return render_template('login.html', title='Login', form=form)
 
 @app.route('/register', methods=['POST', 'GET'])
