@@ -5,28 +5,17 @@
 {% endblock %}
 
 {% block main %}
-    <div class="container login-page">
-        <div class="row">
-            <div class="col">
-                <div class="container">
-                    <div class="login-banner">
-                        <h1>Momentia</h1>
-                        <p>Live in the moment!</p>
-                    </div>
-                </div>
+    <div class="container">
+        <form method="post" action="">
+            <div class="form-group">
+                {{ form.email(class="form-control mx-auto w-auto", placeholder="Email") }}
             </div>
-            <div class="col">
-                <form action="/login" method="post">
-                    <div class="mb-3">
-                        <input autocomplete="off" autofocus type="text" class="form-control mx-auto w-auto" name="username" placeholder="Username">
-                    </div>
-                    <div class="mb-3">
-                        <input autocomplete="off" autofocus type="password" class="form-control mx-auto w-auto" name="password" placeholder="Password">
-                    </div>
-                    <button class="btn btn-primary" type="submit">Log In</button>
-                </form>
-                <a href="">Forgot password?</a>
+            <div class="form-group">
+                {{ form.password(class="form-control mx-auto w-auto", placeholder="Password") }}
             </div>
-        </div>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
     </div>
 {% endblock %}
