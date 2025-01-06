@@ -6,13 +6,15 @@ import cs50
 from forms import RegistrationForm, LoginForm
 
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask import Flask, render_template, redirect, session, flash, g
+from flask import Flask, render_template, redirect, request, session, url_for, flash, g
 from flask_session import Session
 
 # Configure application
 app  = Flask(__name__)
 
 app.config['SECRET_KEY'] = '1c61ded0bfaa415caea6fe5916ebf59d'
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_TYPE'] = "filesystem"
 
 Session(app)
 
@@ -46,6 +48,11 @@ def login():
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     form = RegistrationForm()
+    
+    if form.validate_on_submit():
+        flash(f'Account created for {form.username.data}!', 'success')
+        return redirect(url_for('index'))
+
     return render_template('register.html', title='Register', form=form)
 
 # Logout the current user
