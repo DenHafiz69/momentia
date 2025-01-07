@@ -1,7 +1,7 @@
 import sqlalchemy as db
 
 # Database setup
-engine = db.create_engine("sqlite:///../data/database.db", echo=True)  # Correcting the typo in "sqlitee"
+engine = db.create_engine("sqlite:///../data/database.db", echo=True)
 connection = engine.connect()
 metadata = db.MetaData()
 
