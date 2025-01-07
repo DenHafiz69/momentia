@@ -6,13 +6,31 @@
     font-family: 'Roboto', 'sans-serif';
 }
 
-.post {
+.media-body {
     text-align: left;
+    background-color: #a6b4de;
+    padding: 1em;
+    margin-bottom: 1em;
+    border-radius: 0.8rem;
 }
 
-.post-title {
-    font-size: 1.8em;
+.post-title a {
+    font-size: 1em;
     color: #5f80c5;
+    text-decoration: none;
+}
+
+.post-title a:hover{
+    color: #1a5fb4;
+}
+
+.me-2.post-author {
+    color: #5f80c5;
+    text-decoration: none;
+}
+
+.me-2.post-author:hover {
+    color: #1a5fb4;
 }
 
 .post-content {
@@ -26,8 +44,10 @@
 
 ::placeholder {
     text-align: center;
+    font-size: 0.875em;
 }
 
 .navbar {
     background-color: #5f80c5;
 }
+
