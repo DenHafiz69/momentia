@@ -5,12 +5,12 @@
         <div class="container">
             <article class="media content-section">
                 <div class="media-body">
+                    <h2 class="post-title"><a href="#">{{ post.title }}</a></h2>
                     <div class="article-metadata">
-                        <a class="me-2" href="#">{{ post.author }}</a>
+                        By <a class="me-2 post-author" href="#">{{ post.author }}</a>
                         <small class="text-muted">{{ post.date_posted }}</small>
                     </div>
-                    <h2><a class="post-title" href="#"></a>{{ post.title }}</h2>
-                    <p class="post-content">{{ post.content }}</p>
+                    <p class="post-content mt-2">{{ post.content }}</p>
                 </div>
             </article>
         </div>
