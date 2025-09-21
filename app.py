@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from datetime import datetime
 
-from forms import RegistrationForm, LoginForm, PostForm, EditPostForm
+from forms import RegistrationForm, LoginForm, PostForm, EditPostForm, SettingsForm
 
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask import Flask, render_template, redirect, request, session, url_for, flash, g, abort
@@ -12,7 +12,7 @@ from flask_wtf import CSRFProtect
 
 from modules.database import (insert_user, select_user, select_user_by_email, select_user_by_id,
                             insert_post, select_all_posts, select_post_by_id, select_posts_by_user,
-                            update_post, delete_post)
+                            update_post, delete_post, update_user)
 
 # take environment variables from .env.
 load_dotenv()
@@ -218,7 +218,42 @@ def user_posts(username):
 
 @app.route('/settings', methods=['POST', 'GET'])
 def settings():
-    return redirect('/')
+    if 'user_id' not in session:
+        flash('You need to be logged in to access settings.', 'warning')
+        return redirect(url_for('login'))
+
+    form = SettingsForm()
+    user = select_user_by_id(session['user_id'])
+
+    if form.validate_on_submit():
+        # Check if username already exists (but not for current user)
+        existing_user = select_user(form.username.data)
+        if existing_user and existing_user.id != session['user_id']:
+            flash('Username already exists. Please choose a different username.', 'danger')
+            return render_template('settings.html', title='Settings', form=form)
+
+        # Check if email already exists (but not for current user)
+        existing_email = select_user_by_email(form.email.data)
+        if existing_email and existing_email.id != session['user_id']:
+            flash('Email already exists. Please use a different email address.', 'danger')
+            return render_template('settings.html', title='Settings', form=form)
+
+        # Update user in database
+        try:
+            update_user(session['user_id'], form.username.data, form.email.data)
+            # Update session with new username
+            session['username'] = form.username.data
+            flash('Your settings have been updated!', 'success')
+            return redirect(url_for('settings'))
+        except Exception as e:
+            flash('An error occurred while updating your settings. Please try again.', 'danger')
+
+    elif request.method == 'GET':
+        # Pre-populate form with current user data
+        form.username.data = user.username
+        form.email.data = user.email
+
+    return render_template('settings.html', title='Settings', form=form)
 
 if __name__ == '__main__':
     app.run(debug=True)

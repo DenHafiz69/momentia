@@ -62,6 +62,13 @@ def select_user_by_id(user_id: int):
     session.close()
     return user
 
+def update_user(user_id: int, username: str, email: str) -> None:
+    session = Session()
+    query = user_table.update().where(user_table.c.id == user_id).values(username=username, email=email)
+    session.execute(query)
+    session.commit()
+    session.close()
+
 # Post-related functions
 def insert_post(title: str, content: str, author_id: int) -> None:
     session = Session()
