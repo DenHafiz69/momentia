@@ -1,53 +1,160 @@
 /* Color Reference: https://colorffy.com/dark-theme-generator?colors=1a5fb4-121212 */
 
+/* Global Styles */
 * {
     margin: 0;
     padding: 0;
-    font-family: 'Roboto', 'sans-serif';
 }
 
-.media-body {
-    text-align: left;
-    background-color: #a6b4de;
-    padding: 1em;
-    margin-bottom: 1em;
-    border-radius: 0.8rem;
+body {
+    font-family: 'Poppins', 'Roboto', sans-serif;
+    line-height: 1.6;
+    background-color: #f8f9fa;
 }
 
-.post-title a {
-    font-size: 1em;
-    color: #5f80c5;
-    text-decoration: none;
+/* Navigation Styles */
+.navbar {
+    background-color: #5f80c5 !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.post-title a:hover{
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    transform: translateY(-1px);
+}
+
+.nav-link.active {
+    background-color: rgba(255,255,255,0.1) !important;
+    border-radius: 0.375rem;
+}
+
+/* Post Styles */
+.post-title-link {
     color: #1a5fb4;
+    font-weight: 600;
+    transition: color 0.3s ease;
 }
 
-.me-2.post-author {
+.post-title-link:hover {
+    color: #0d47a1;
+}
+
+.post-author-link {
     color: #5f80c5;
-    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
 }
 
-.me-2.post-author:hover {
+.post-author-link:hover {
     color: #1a5fb4;
 }
 
 .post-content {
     text-align: justify;
-    font-size: 0.875em;
+    line-height: 1.7;
+    color: #495057;
 }
 
-.form-group {
-    padding: 0.5em;
+/* Card Enhancements */
+.card {
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-::placeholder {
-    text-align: center;
-    font-size: 0.875em;
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
 }
 
-.navbar {
+/* Form Styles */
+.form-control:focus {
+    border-color: #5f80c5;
+    box-shadow: 0 0 0 0.2rem rgba(95, 128, 197, 0.25);
+}
+
+.btn-primary {
     background-color: #5f80c5;
+    border-color: #5f80c5;
 }
 
+.btn-primary:hover {
+    background-color: #1a5fb4;
+    border-color: #1a5fb4;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+/* Alert Styles */
+.alert {
+    border: none;
+    border-radius: 0.5rem;
+    margin-bottom: 0;
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+}
+
+/* Responsive Utilities */
+@media (max-width: 576px) {
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+    
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    .display-4 {
+        font-size: 2rem !important;
+    }
+    
+    .btn-lg {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container-lg {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .post-content {
+        font-size: 0.95rem;
+    }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #121212;
+        color: #ffffff;
+    }
+    
+    .card {
+        background-color: #1e1e1e;
+        color: #ffffff;
+    }
+    
+    .text-muted {
+        color: #adb5bd !important;
+    }
+}
+
+/* Animation for smooth transitions */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}

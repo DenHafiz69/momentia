@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<div class="container-lg">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title text-center mb-4">{{ legend }}</h2>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            {{ form.title.label(class="form-label") }}
+                            {% if form.title.errors %}
+                                {{ form.title(class="form-control is-invalid") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.title.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.title(class="form-control") }}
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.content.label(class="form-label") }}
+                            {% if form.content.errors %}
+                                {{ form.content(class="form-control is-invalid", rows="8") }}
+                                <div class="invalid-feedback">
+                                    {% for error in form.content.errors %}
+                                        <span>{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                {{ form.content(class="form-control", rows="8") }}
+                            {% endif %}
+                            <div class="form-text">Share your thoughts with the community!</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('index') }}" class="btn btn-secondary me-md-2">
+                                <i class='bx bx-arrow-back me-1'></i>Cancel
+                            </a>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

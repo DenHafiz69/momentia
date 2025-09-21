@@ -1,31 +1,62 @@
 {% extends "layout.html" %}
 
 {% block main %}
-    
-    <div class="container text-center">
-        <form method="post" action="">
-            {{ form.hidden_tag() }}
-            <div class="form-group">
-                {{ form.username(class="form-control mx-auto w-auto", placeholder="Username") }}
+<div class="container-lg">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class='bx bx-user-plus display-4 text-success mb-3'></i>
+                        <h2 class="card-title">Create Account</h2>
+                        <p class="text-muted">Join Momentia today</p>
+                    </div>
+                    
+                    <form method="post" action="">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.username.id }}" class="form-label">
+                                <i class='bx bx-user me-1'></i>Username
+                            </label>
+                            {{ form.username(class="form-control form-control-lg", placeholder="Choose a username") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.email.id }}" class="form-label">
+                                <i class='bx bx-envelope me-1'></i>Email
+                            </label>
+                            {{ form.email(class="form-control form-control-lg", placeholder="Enter your email") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.password.id }}" class="form-label">
+                                <i class='bx bx-lock me-1'></i>Password
+                            </label>
+                            {{ form.password(class="form-control form-control-lg", placeholder="Create a password") }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.confirm_password.id }}" class="form-label">
+                                <i class='bx bx-lock-alt me-1'></i>Confirm Password
+                            </label>
+                            {{ form.confirm_password(class="form-control form-control-lg", placeholder="Confirm your password") }}
+                        </div>
+                        
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-success btn-lg") }}
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <small class="text-muted">
+                            Already have an account? 
+                            <a href="{{ url_for('login') }}" class="text-decoration-none">Sign in here</a>
+                        </small>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                {{ form.email(class="form-control mx-auto w-auto", placeholder="Email")}}
-            </div>
-            <div class="form-group">
-                {{ form.password(class="form-control mx-auto w-auto", placeholder="Password")}}
-            </div>
-            <div class="form-group">
-                {{ form.confirm_password(class="form-control mx-auto w-auto", placeholder="Confirm Password")}}
-            </div>
-            <div class="form-group pt-2 pb-3">
-                {{ form.submit(class="btn btn-outline-info") }}
-            </div>
-        </form>
+        </div>
     </div>
-    <div class="container pt-2 text-center">
-        <small class="text-muted">
-            Already Have An Account? <a href="{{ url_for('login') }}" class="ml-2">Sign In</a>
-        </small>
-    </div>
-    
+</div>
 {% endblock %}

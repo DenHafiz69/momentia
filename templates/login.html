@@ -1,18 +1,48 @@
 {% extends "layout.html" %}
 
 {% block main %}
-    <div class="container text-center">
-        <form method="post" action="">
-            {{ form.hidden_tag() }}
-            <div class="form-group">
-                {{ form.email(class="form-control mx-auto w-auto", placeholder="Email") }}
+<div class="container-lg">
+    <div class="row justify-content-center">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <div class="text-center mb-4">
+                        <i class='bx bx-log-in display-4 text-primary mb-3'></i>
+                        <h2 class="card-title">Welcome Back</h2>
+                        <p class="text-muted">Sign in to your account</p>
+                    </div>
+                    
+                    <form method="post" action="">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.email.id }}" class="form-label">
+                                <i class='bx bx-envelope me-1'></i>Email
+                            </label>
+                            {{ form.email(class="form-control form-control-lg", placeholder="Enter your email") }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.password.id }}" class="form-label">
+                                <i class='bx bx-lock me-1'></i>Password
+                            </label>
+                            {{ form.password(class="form-control form-control-lg", placeholder="Enter your password") }}
+                        </div>
+                        
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                    
+                    <div class="text-center mt-4">
+                        <small class="text-muted">
+                            Don't have an account? 
+                            <a href="{{ url_for('register') }}" class="text-decoration-none">Sign up here</a>
+                        </small>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                {{ form.password(class="form-control mx-auto w-auto", placeholder="Password") }}
-            </div>
-            <div class="form-group">
-                {{ form.submit(class="btn btn-outline-info") }}
-            </div>
-        </form>
+        </div>
     </div>
+</div>
 {% endblock %}

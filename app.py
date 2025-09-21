@@ -1,18 +1,24 @@
 import os
 
+from dotenv import load_dotenv
 from datetime import datetime
 
-from forms import RegistrationForm, LoginForm
+from forms import RegistrationForm, LoginForm, PostForm, EditPostForm
 
 from werkzeug.security import check_password_hash, generate_password_hash
-from flask import Flask, render_template, redirect, request, session, url_for, flash, g
+from flask import Flask, render_template, redirect, request, session, url_for, flash, g, abort
 from flask_session import Session
 from flask_wtf import CSRFProtect
 
-from modules.database import insert_user, select_user, select_user_by_email
+from modules.database import (insert_user, select_user, select_user_by_email, select_user_by_id,
+                            insert_post, select_all_posts, select_post_by_id, select_posts_by_user,
+                            update_post, delete_post)
+
+# take environment variables from .env.
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '1c61ded0bfaa415caea6fe5916ebf59d'
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY')
 app.config['SESSION_TYPE'] = "filesystem"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./data/database.db'
 
@@ -22,27 +28,25 @@ Session(app)
 # Initialize CSRF protection
 csrf = CSRFProtect(app)
 
-posts = [
-    {
-        'author': 'Den Hafiz',
-        'title': 'This is a post',
-        'content': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque rhoncus et magna non suscipit. Aliquam porttitor dolor velit, eu rutrum nulla accumsan ut. Morbi enim augue, scelerisque vitae orci eget, finibus pretium leo. Integer pulvinar laoreet pretium.',
-        'date_posted': '5th January 2024'
-    },
-    {
-        'author': 'Nor Syazni',
-        'title': 'Second post',
-        'content': 'Nullam interdum, ante nec tempor bibendum, nisl mi ornare neque, ut malesuada felis nisi ac erat. Mauris et facilisis sapien. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Quisque tincidunt purus elit, pretium rhoncus purus commodo nec. Curabitur pellentesque tempus eros vel vestibulum. Ut sed finibus arcu. Vestibulum non quam elit.',
-        'date_posted': '2nd January 2024'
-    }
-]
-
 # The homepage of the website
 @app.route('/')
 def index():
-
+    # Get all posts from database
+    posts = select_all_posts()
+    
+    # Convert posts to format expected by template
+    formatted_posts = []
+    for post in posts:
+        formatted_posts.append({
+            'id': post.id,
+            'title': post.title,
+            'author': post.author,
+            'date_posted': post.date_posted.strftime('%B %d, %Y') if hasattr(post.date_posted, 'strftime') else str(post.date_posted),
+            'content': post.content
+        })
+    
     # Show the homepage
-    return render_template('index.html', posts=posts)
+    return render_template('index.html', posts=formatted_posts)
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -102,7 +106,115 @@ def logout():
 
     return redirect('/')
 
+# Create a new post
+@app.route('/post/new', methods=['GET', 'POST'])
+def new_post():
+    if 'user_id' not in session:
+        flash('You need to be logged in to create a post.', 'warning')
+        return redirect(url_for('login'))
+    
+    form = PostForm()
+    if form.validate_on_submit():
+        try:
+            insert_post(form.title.data, form.content.data, session['user_id'])
+            flash('Your post has been created!', 'success')
+            return redirect(url_for('index'))
+        except Exception as e:
+            flash('An error occurred while creating your post. Please try again.', 'danger')
+    
+    return render_template('create_post.html', title='New Post', form=form, legend='New Post')
 
+# View a specific post
+@app.route('/post/<int:post_id>')
+def post(post_id):
+    post = select_post_by_id(post_id)
+    if not post:
+        abort(404)
+    
+    formatted_post = {
+        'id': post.id,
+        'title': post.title,
+        'author': post.author,
+        'author_id': post.author_id,
+        'date_posted': post.date_posted.strftime('%B %d, %Y') if hasattr(post.date_posted, 'strftime') else str(post.date_posted),
+        'content': post.content
+    }
+    
+    return render_template('post.html', title=post.title, post=formatted_post)
+
+# Edit a post
+@app.route('/post/<int:post_id>/edit', methods=['GET', 'POST'])
+def edit_post(post_id):
+    post = select_post_by_id(post_id)
+    if not post:
+        abort(404)
+    
+    if 'user_id' not in session:
+        flash('You need to be logged in to edit posts.', 'warning')
+        return redirect(url_for('login'))
+    
+    if post.author_id != session['user_id']:
+        flash('You can only edit your own posts.', 'danger')
+        return redirect(url_for('post', post_id=post_id))
+    
+    form = EditPostForm()
+    if form.validate_on_submit():
+        try:
+            update_post(post_id, form.title.data, form.content.data)
+            flash('Your post has been updated!', 'success')
+            return redirect(url_for('post', post_id=post_id))
+        except Exception as e:
+            flash('An error occurred while updating your post. Please try again.', 'danger')
+    elif request.method == 'GET':
+        form.title.data = post.title
+        form.content.data = post.content
+    
+    return render_template('create_post.html', title='Edit Post', form=form, legend='Edit Post')
+
+# Delete a post
+@app.route('/post/<int:post_id>/delete', methods=['POST'])
+def delete_post_route(post_id):
+    post = select_post_by_id(post_id)
+    if not post:
+        abort(404)
+    
+    if 'user_id' not in session:
+        flash('You need to be logged in to delete posts.', 'warning')
+        return redirect(url_for('login'))
+    
+    if post.author_id != session['user_id']:
+        flash('You can only delete your own posts.', 'danger')
+        return redirect(url_for('post', post_id=post_id))
+    
+    try:
+        delete_post(post_id)
+        flash('Your post has been deleted!', 'success')
+    except Exception as e:
+        flash('An error occurred while deleting your post. Please try again.', 'danger')
+    
+    return redirect(url_for('index'))
+
+# View user's posts
+@app.route('/user/<username>')
+def user_posts(username):
+    user = select_user(username)
+    if not user:
+        abort(404)
+    
+    posts = select_posts_by_user(user.id)
+    
+    # Convert posts to format expected by template
+    formatted_posts = []
+    for post in posts:
+        formatted_posts.append({
+            'id': post.id,
+            'title': post.title,
+            'author': post.author,
+            'date_posted': post.date_posted.strftime('%B %d, %Y') if hasattr(post.date_posted, 'strftime') else str(post.date_posted),
+            'content': post.content
+        })
+    
+    return render_template('user_posts.html', posts=formatted_posts, user=user)
 
 @app.route('/settings', methods=['POST', 'GET'])
 def settings():

@@ -4,13 +4,10 @@
 <div class="container-lg">
     <div class="row justify-content-center">
         <div class="col-12 col-lg-8">
-            {% if session.user_id %}
-                <div class="mb-4">
-                    <a href="{{ url_for('new_post') }}" class="btn btn-primary">
-                        <i class='bx bx-plus me-1'></i>Create New Post
-                    </a>
-                </div>
-            {% endif %}
+            <div class="mb-4">
+                <h1 class="h2">Posts by {{ user.username }}</h1>
+                <p class="text-muted">{{ posts|length }} post{% if posts|length != 1 %}s{% endif %}</p>
+            </div>
             
             {% if posts %}
                 {% for post in posts %}
@@ -22,7 +19,7 @@
                             <div class="d-flex flex-wrap align-items-center mb-3 text-muted small">
                                 <div class="me-3 mb-1">
                                     <i class='bx bx-user me-1'></i>
-                                    <a href="{{ url_for('user_posts', username=post.author) }}" class="text-decoration-none post-author-link">{{ post.author }}</a>
+                                    <span>{{ post.author }}</span>
                                 </div>
                                 <div class="mb-1">
                                     <i class='bx bx-time me-1'></i>
@@ -40,18 +37,15 @@
                         <i class='bx bx-message-dots display-1 text-muted'></i>
                     </div>
                     <h3 class="text-muted">No posts yet</h3>
-                    <p class="text-muted">Be the first to share your thoughts!</p>
-                    {% if session.user_id %}
-                        <a href="{{ url_for('new_post') }}" class="btn btn-primary mt-3">
-                            <i class='bx bx-plus me-1'></i>Create Your First Post
-                        </a>
-                    {% else %}
-                        <a href="{{ url_for('login') }}" class="btn btn-primary mt-3">
-                            <i class='bx bx-log-in me-1'></i>Login to Create Posts
-                        </a>
-                    {% endif %}
+                    <p class="text-muted">{{ user.username }} hasn't shared any thoughts yet.</p>
                 </div>
             {% endif %}
+            
+            <div class="mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">
+                    <i class='bx bx-arrow-back me-1'></i>Back to All Posts
+                </a>
+            </div>
         </div>
     </div>
 </div>
