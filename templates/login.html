@@ -3,6 +3,7 @@
 {% block main %}
     <div class="container text-center">
         <form method="post" action="">
+            {{ form.hidden_tag() }}
             <div class="form-group">
                 {{ form.email(class="form-control mx-auto w-auto", placeholder="Email") }}
             </div>

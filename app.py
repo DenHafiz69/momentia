@@ -7,13 +7,20 @@ from forms import RegistrationForm, LoginForm
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask import Flask, render_template, redirect, request, session, url_for, flash, g
 from flask_session import Session
+from flask_wtf import CSRFProtect
 
-from modules.database import insert_user, select_user
+from modules.database import insert_user, select_user, select_user_by_email
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1c61ded0bfaa415caea6fe5916ebf59d'
 app.config['SESSION_TYPE'] = "filesystem"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./data/database.db'
+
+# Initialize Flask-Session
+Session(app)
+
+# Initialize CSRF protection
+csrf = CSRFProtect(app)
 
 posts = [
     {
@@ -42,18 +49,47 @@ def login():
     form = LoginForm()
 
     if form.validate_on_submit():
-        flash(f'Login successful.', 'success')
-        return redirect(url_for('index'))
+        # Find user by email
+        user = select_user_by_email(form.email.data)
+        if user and check_password_hash(user.password, form.password.data):
+            # Set session variables
+            session['user_id'] = user.id
+            session['username'] = user.username
+            flash(f'Welcome back, {user.username}!', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('Login failed. Please check your email and password.', 'danger')
 
     return render_template('login.html', title='Login', form=form)
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     form = RegistrationForm()
-    
+
     if form.validate_on_submit():
-        flash(f'Account created for {form.username.data}!', 'success')
-        return redirect(url_for('index'))
+        # Check if username already exists
+        existing_user = select_user(form.username.data)
+        if existing_user:
+            flash('Username already exists. Please choose a different username.', 'danger')
+            return render_template('register.html', title='Register', form=form)
+        
+        # Check if email already exists
+        existing_email = select_user_by_email(form.email.data)
+        if existing_email:
+            flash('Email already exists. Please use a different email address.', 'danger')
+            return render_template('register.html', title='Register', form=form)
+
+        # Hash the password
+        hashed_password = generate_password_hash(form.password.data)
+
+        # Insert user into database
+        try:
+            insert_user(form.username.data, form.email.data, hashed_password)
+            flash(f'Account created for {form.username.data}!', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            flash('An error occurred while creating your account. Please try again.', 'danger')
+            return render_template('register.html', title='Register', form=form)
 
     return render_template('register.html', title='Register', form=form)
 

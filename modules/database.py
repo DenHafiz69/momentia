@@ -3,7 +3,7 @@ import sqlalchemy as db
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 # Database setup
-engine = db.create_engine("sqlite:///:memory:", echo=True, connect_args={"check_same_thread": False})
+engine = db.create_engine("sqlite:///./data/database.db", echo=True, connect_args={"check_same_thread": False})
 Session = scoped_session(sessionmaker(bind=engine))
 
 # Metadata and table definition
@@ -31,6 +31,14 @@ def insert_user(username: str, email: str, password: str) -> None:
 def select_user(username: str):
     session = Session()
     query = user_table.select().where(user_table.c.username == username)
+    result = session.execute(query)
+    user = result.fetchone()
+    session.close()
+    return user
+
+def select_user_by_email(email: str):
+    session = Session()
+    query = user_table.select().where(user_table.c.email == email)
     result = session.execute(query)
     user = result.fetchone()
     session.close()
