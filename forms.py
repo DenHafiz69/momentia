@@ -16,14 +16,12 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class PostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired(), Length(min=1, max=100)])
-    content = TextAreaField('Content', validators=[DataRequired(), Length(min=1, max=5000)])
-    submit = SubmitField('Create Post')
+    content = TextAreaField('Content', validators=[DataRequired(), Length(min=1, max=280)])
+    submit = SubmitField('Create Moment')
 
 class EditPostForm(FlaskForm):
-    title = StringField('Title', validators=[DataRequired(), Length(min=1, max=100)])
-    content = TextAreaField('Content', validators=[DataRequired(), Length(min=1, max=5000)])
-    submit = SubmitField('Update Post')
+    content = TextAreaField('Content', validators=[DataRequired(), Length(min=1, max=280)])
+    submit = SubmitField('Update Moment')
 
 class SettingsForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])

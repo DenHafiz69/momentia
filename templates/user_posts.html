@@ -5,17 +5,14 @@
     <div class="row justify-content-center">
         <div class="col-12 col-lg-8">
             <div class="mb-4">
-                <h1 class="h2">Posts by {{ user.username }}</h1>
-                <p class="text-muted">{{ posts|length }} post{% if posts|length != 1 %}s{% endif %}</p>
+                <h1 class="h2">Moments by {{ user.username }}</h1>
+                <p class="text-muted">{{ posts|length }} moment{% if posts|length != 1 %}s{% endif %}</p>
             </div>
             
             {% if posts %}
                 {% for post in posts %}
                     <div class="card mb-4 shadow-sm">
                         <div class="card-body">
-                            <h2 class="card-title h4 mb-3">
-                                <a href="{{ url_for('post', post_id=post.id) }}" class="text-decoration-none post-title-link">{{ post.title }}</a>
-                            </h2>
                             <div class="d-flex flex-wrap align-items-center mb-3 text-muted small">
                                 <div class="me-3 mb-1">
                                     <i class='bx bx-user me-1'></i>
@@ -25,9 +22,16 @@
                                     <i class='bx bx-time me-1'></i>
                                     <span>{{ post.date_posted }}</span>
                                 </div>
+                                <div class="mb-1 ms-3">
+                                    <i class='bx bx-hourglass me-1'></i>
+                                    <span>Expires: {{ post.expires_at }}</span>
+                                </div>
+                                <div class="mb-1 ms-3">
+                                    <i class='bx bx-upvote me-1'></i>
+                                    <span>{{ post.votes }} votes</span>
+                                </div>
                             </div>
-                            <p class="card-text post-content">{{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}</p>
-                            <a href="{{ url_for('post', post_id=post.id) }}" class="btn btn-outline-primary btn-sm">Read More</a>
+                            <p class="card-text post-content" style="white-space: pre-wrap;">{{ post.content }}</p>
                         </div>
                     </div>
                 {% endfor %}
@@ -36,14 +40,14 @@
                     <div class="mb-4">
                         <i class='bx bx-message-dots display-1 text-muted'></i>
                     </div>
-                    <h3 class="text-muted">No posts yet</h3>
+                    <h3 class="text-muted">No moments yet</h3>
                     <p class="text-muted">{{ user.username }} hasn't shared any thoughts yet.</p>
                 </div>
             {% endif %}
             
             <div class="mt-4">
                 <a href="{{ url_for('index') }}" class="btn btn-secondary">
-                    <i class='bx bx-arrow-back me-1'></i>Back to All Posts
+                    <i class='bx bx-arrow-back me-1'></i>Back to All Moments
                 </a>
             </div>
         </div>

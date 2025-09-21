@@ -22,10 +22,11 @@ post_table = db.Table(
     "post",
     metadata,
     db.Column("id", db.Integer, primary_key=True),
-    db.Column("title", db.String, nullable=False),
     db.Column("content", db.Text, nullable=False),
     db.Column("date_posted", db.DateTime, nullable=False, default=db.func.current_timestamp()),
     db.Column("author_id", db.Integer, db.ForeignKey("user.id"), nullable=False),
+    db.Column("expires_at", db.DateTime, nullable=False, default=db.func.datetime(db.func.current_timestamp(), '+24 hours')),
+    db.Column("votes", db.Integer, default=0),
 )
 
 metadata.create_all(engine)
@@ -70,9 +71,27 @@ def update_user(user_id: int, username: str, email: str) -> None:
     session.close()
 
 # Post-related functions
-def insert_post(title: str, content: str, author_id: int) -> None:
+def insert_post(content: str, author_id: int) -> None:
     session = Session()
-    query = post_table.insert().values(title=title, content=content, author_id=author_id)
+    query = post_table.insert().values(content=content, author_id=author_id)
+    session.execute(query)
+    session.commit()
+    session.close()
+
+def update_post_expiration(post_id: int, hours_to_add: int) -> None:
+    session = Session()
+    query = post_table.update().where(post_table.c.id == post_id).values(
+        expires_at=db.func.datetime(post_table.c.expires_at, f'+{hours_to_add} hours')
+    )
+    session.execute(query)
+    session.commit()
+    session.close()
+
+def update_post_votes(post_id: int, vote_change: int) -> None:
+    session = Session()
+    query = post_table.update().where(post_table.c.id == post_id).values(
+        votes=post_table.c.votes + vote_change
+    )
     session.execute(query)
     session.commit()
     session.close()
@@ -81,13 +100,14 @@ def select_all_posts():
     session = Session()
     query = db.select(
         post_table.c.id,
-        post_table.c.title,
         post_table.c.content,
         post_table.c.date_posted,
+        post_table.c.expires_at,
+        post_table.c.votes,
         user_table.c.username.label('author')
     ).select_from(
         post_table.join(user_table, post_table.c.author_id == user_table.c.id)
-    ).order_by(post_table.c.date_posted.desc())
+    ).where(post_table.c.expires_at > db.func.current_timestamp()).order_by(post_table.c.date_posted.desc())
     
     result = session.execute(query)
     posts = result.fetchall()
@@ -98,9 +118,10 @@ def select_post_by_id(post_id: int):
     session = Session()
     query = db.select(
         post_table.c.id,
-        post_table.c.title,
         post_table.c.content,
         post_table.c.date_posted,
+        post_table.c.expires_at,
+        post_table.c.votes,
         post_table.c.author_id,
         user_table.c.username.label('author')
     ).select_from(
@@ -116,9 +137,10 @@ def select_posts_by_user(user_id: int):
     session = Session()
     query = db.select(
         post_table.c.id,
-        post_table.c.title,
         post_table.c.content,
         post_table.c.date_posted,
+        post_table.c.expires_at,
+        post_table.c.votes,
         user_table.c.username.label('author')
     ).select_from(
         post_table.join(user_table, post_table.c.author_id == user_table.c.id)
@@ -129,9 +151,9 @@ def select_posts_by_user(user_id: int):
     session.close()
     return posts
 
-def update_post(post_id: int, title: str, content: str) -> None:
+def update_post(post_id: int, content: str) -> None:
     session = Session()
-    query = post_table.update().where(post_table.c.id == post_id).values(title=title, content=content)
+    query = post_table.update().where(post_table.c.id == post_id).values(content=content)
     session.execute(query)
     session.commit()
     session.close()

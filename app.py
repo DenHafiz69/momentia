@@ -39,10 +39,11 @@ def index():
     for post in posts:
         formatted_posts.append({
             'id': post.id,
-            'title': post.title,
             'author': post.author,
             'date_posted': post.date_posted.strftime('%B %d, %Y') if hasattr(post.date_posted, 'strftime') else str(post.date_posted),
-            'content': post.content
+            'content': post.content,
+            'expires_at': post.expires_at.strftime('%B %d, %Y %H:%M:%S') if hasattr(post.expires_at, 'strftime') else str(post.expires_at),
+            'votes': post.votes
         })
     
     # Show the homepage
@@ -116,13 +117,13 @@ def new_post():
     form = PostForm()
     if form.validate_on_submit():
         try:
-            insert_post(form.title.data, form.content.data, session['user_id'])
+            insert_post(form.content.data, session['user_id'])
             flash('Your post has been created!', 'success')
             return redirect(url_for('index'))
         except Exception as e:
             flash('An error occurred while creating your post. Please try again.', 'danger')
     
-    return render_template('create_post.html', title='New Post', form=form, legend='New Post')
+    return render_template('create_post.html', form=form, legend='New Moment')
 
 # View a specific post
 @app.route('/post/<int:post_id>')
@@ -133,14 +134,47 @@ def post(post_id):
     
     formatted_post = {
         'id': post.id,
-        'title': post.title,
         'author': post.author,
         'author_id': post.author_id,
         'date_posted': post.date_posted.strftime('%B %d, %Y') if hasattr(post.date_posted, 'strftime') else str(post.date_posted),
-        'content': post.content
+        'content': post.content,
+        'expires_at': post.expires_at.strftime('%B %d, %Y %H:%M:%S') if hasattr(post.expires_at, 'strftime') else str(post.expires_at),
+        'votes': post.votes
     }
     
-    return render_template('post.html', title=post.title, post=formatted_post)
+    return render_template('post.html', post=formatted_post)
+
+@app.route('/post/<int:post_id>/upvote', methods=['POST'])
+def upvote_post(post_id):
+    if 'user_id' not in session:
+        flash('You need to be logged in to vote.', 'warning')
+        return redirect(url_for('login'))
+    
+    from modules.database import update_post_expiration, update_post_votes
+    try:
+        update_post_expiration(post_id, 1) # Add 1 hour
+        update_post_votes(post_id, 1) # Add 1 vote
+        flash('Post upvoted!', 'success')
+    except Exception as e:
+        flash('An error occurred while upvoting the post. Please try again.', 'danger')
+    
+    return redirect(url_for('post', post_id=post_id))
+
+@app.route('/post/<int:post_id>/downvote', methods=['POST'])
+def downvote_post(post_id):
+    if 'user_id' not in session:
+        flash('You need to be logged in to vote.', 'warning')
+        return redirect(url_for('login'))
+    
+    from modules.database import update_post_expiration, update_post_votes
+    try:
+        update_post_expiration(post_id, -1) # Remove 1 hour
+        update_post_votes(post_id, -1) # Remove 1 vote
+        flash('Post downvoted!', 'success')
+    except Exception as e:
+        flash('An error occurred while downvoting the post. Please try again.', 'danger')
+    
+    return redirect(url_for('post', post_id=post_id))
 
 # Edit a post
 @app.route('/post/<int:post_id>/edit', methods=['GET', 'POST'])
@@ -160,16 +194,15 @@ def edit_post(post_id):
     form = EditPostForm()
     if form.validate_on_submit():
         try:
-            update_post(post_id, form.title.data, form.content.data)
+            update_post(post_id, form.content.data)
             flash('Your post has been updated!', 'success')
             return redirect(url_for('post', post_id=post_id))
         except Exception as e:
             flash('An error occurred while updating your post. Please try again.', 'danger')
     elif request.method == 'GET':
-        form.title.data = post.title
         form.content.data = post.content
     
-    return render_template('create_post.html', title='Edit Post', form=form, legend='Edit Post')
+    return render_template('create_post.html', form=form, legend='Edit Post')
 
 # Delete a post
 @app.route('/post/<int:post_id>/delete', methods=['POST'])
@@ -208,10 +241,11 @@ def user_posts(username):
     for post in posts:
         formatted_posts.append({
             'id': post.id,
-            'title': post.title,
             'author': post.author,
             'date_posted': post.date_posted.strftime('%B %d, %Y') if hasattr(post.date_posted, 'strftime') else str(post.date_posted),
-            'content': post.content
+            'content': post.content,
+            'expires_at': post.expires_at.strftime('%B %d, %Y %H:%M:%S') if hasattr(post.expires_at, 'strftime') else str(post.expires_at),
+            'votes': post.votes
         })
     
     return render_template('user_posts.html', posts=formatted_posts, user=user)

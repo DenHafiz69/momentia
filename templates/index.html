@@ -7,7 +7,7 @@
             {% if session.user_id %}
                 <div class="mb-4">
                     <a href="{{ url_for('new_post') }}" class="btn btn-primary">
-                        <i class='bx bx-plus me-1'></i>Create New Post
+                        <i class='bx bx-plus me-1'></i>Create New Moment
                     </a>
                 </div>
             {% endif %}
@@ -16,9 +16,6 @@
                 {% for post in posts %}
                     <div class="card mb-4 shadow-sm">
                         <div class="card-body">
-                            <h2 class="card-title h4 mb-3">
-                                <a href="{{ url_for('post', post_id=post.id) }}" class="text-decoration-none post-title-link">{{ post.title }}</a>
-                            </h2>
                             <div class="d-flex flex-wrap align-items-center mb-3 text-muted small">
                                 <div class="me-3 mb-1">
                                     <i class='bx bx-user me-1'></i>
@@ -28,9 +25,30 @@
                                     <i class='bx bx-time me-1'></i>
                                     <span>{{ post.date_posted }}</span>
                                 </div>
+                                <div class="mb-1 ms-3">
+                                    <i class='bx bx-hourglass me-1'></i>
+                                    <span>Expires: {{ post.expires_at }}</span>
+                                </div>
+                                <div class="mb-1 ms-3">
+                                    <i class='bx bx-upvote me-1'></i>
+                                    <span>{{ post.votes }} votes</span>
+                                </div>
                             </div>
-                            <p class="card-text post-content">{{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}</p>
-                            <a href="{{ url_for('post', post_id=post.id) }}" class="btn btn-outline-primary btn-sm">Read More</a>
+                            <p class="card-text post-content mb-3" style="white-space: pre-wrap;">{{ post.content }}</p>
+                            {% if session.user_id %}
+                                <div class="d-flex gap-2 mb-3">
+                                    <form action="{{ url_for('upvote_post', post_id=post.id) }}" method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class='bx bx-up-arrow-alt me-1'></i>Upvote
+                                        </button>
+                                    </form>
+                                    <form action="{{ url_for('downvote_post', post_id=post.id) }}" method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class='bx bx-down-arrow-alt me-1'></i>Downvote
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
                 {% endfor %}
@@ -39,11 +57,11 @@
                     <div class="mb-4">
                         <i class='bx bx-message-dots display-1 text-muted'></i>
                     </div>
-                    <h3 class="text-muted">No posts yet</h3>
+                    <h3 class="text-muted">No moments yet</h3>
                     <p class="text-muted">Be the first to share your thoughts!</p>
                     {% if session.user_id %}
                         <a href="{{ url_for('new_post') }}" class="btn btn-primary mt-3">
-                            <i class='bx bx-plus me-1'></i>Create Your First Post
+                            <i class='bx bx-plus me-1'></i>Create Your First Moment
                         </a>
                     {% else %}
                         <a href="{{ url_for('login') }}" class="btn btn-primary mt-3">
